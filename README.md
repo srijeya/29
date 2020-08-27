@@ -21,8 +21,7 @@ If you have used a different Login approach, then the code needs adjustment acco
 ## How to Run
 * Connect Android Phone to USB. Ensure USB-debugging option is enabled
 * Start the Appium server
-  - (1) ![Appium Home](/imgs/appium_server_home.png "Appium Home")
-  - (2) ![Appium Started](/imgs/appium_server_running.png "Appium Running")
+  - (1) ![Appium Home](/imgs/appium_server_home.png "Appium Home")  (2) ![Appium Started](/imgs/appium_server_running.png "Appium Running")
 * Launch the python script
     > python add_money.py
 
