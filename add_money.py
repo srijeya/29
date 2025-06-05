@@ -149,11 +149,14 @@ class AddMoney:
         self.teardown()
 
 if __name__ == '__main__':
-    while True:
+    keep_running = True
+    while keep_running:
         try:
-            while True:
-                runner = AddMoney()
-                runner.main(50)  # reset at each 50 count so that if there's some issue with app, we can recover
+            runner = AddMoney()
+            runner.main(50)  # reset at each 50 count so that if there's some issue with app, we can recover
         except Exception as e:
             print(e)
-            print("Hit a Snitch. Recovering from error...")
+            print("An error occurred. Attempting to recover...")
+            user_input = input("Do you want to continue? (yes/no): ").strip().lower()
+            if user_input != 'yes':
+                keep_running = False
