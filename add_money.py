@@ -7,53 +7,20 @@ If you have used a different login approach, then the code needs adjustment acco
 """
 
 import time
-from typing import Dict, Any
-
 from appium import webdriver
-from appium.webdriver.common.mobileby import MobileBy
 from appium.webdriver.common.touch_action import TouchAction
 from appium.webdriver.appium_service import AppiumService
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
-# Device and App Constants
-DESIRED_CAPS: Dict[str, Any] = {
-    "platformName": "Android",
-    "appActivity": "org.cocos2dx.javascript.AppActivity",
-    "appPackage": "com.bombayplay.TwentyNine",
-    "deviceName": "1173a2bb"
-}
-
-WIN_SIZE_RN8P: Dict[str, int] = {'width': 2134, 'height': 1080}  # RN8P
-WIN_SIZE_POCO: Dict[str, int] = {'width': 2027, 'height': 1080}  # POCO
-
-# UI Coordinate and Timing Constants
-TAP_FB_LOGIN_X = 1656
-TAP_FB_LOGIN_Y = 354
-TAP_FB_LOGIN_DELAY = 5
-
-TAP_DOB_MONTH_X = 890
-TAP_DOB_MONTH_Y = 500
-TAP_DOB_JAN_X = 700
-TAP_DOB_JAN_Y = 250
-TAP_DOB_YEAR_ARROW_X = 1694
-TAP_DOB_YEAR_ARROW_Y = 504
-TAP_DOB_YEAR_1961_X = 1528
-TAP_DOB_YEAR_1961_Y = 460
-TAP_DOB_CONTINUE_X = 1100
-TAP_DOB_CONTINUE_Y = 800
-
-TAP_FREE_COINS_X = 409
-TAP_FREE_COINS_Y = 489
-TAP_AD_WATCH_TIME = 35
-TAP_AFTER_AD_DELAY = 1
-TAP_CONTINUE_X = 1115
-TAP_CONTINUE_Y = 777
-TAP_COLLECT_FRIEND_X = 1130
-TAP_COLLECT_FRIEND_Y = 883
-
-APP_LAUNCH_DELAY = 5
-MAIN_LOOP_COUNT = 50
+from config import (
+    DESIRED_CAPS, WIN_SIZE_RN8P, WIN_SIZE_POCO,
+    TAP_FB_LOGIN_X, TAP_FB_LOGIN_Y, TAP_FB_LOGIN_DELAY,
+    TAP_DOB_MONTH_X, TAP_DOB_MONTH_Y, TAP_DOB_JAN_X, TAP_DOB_JAN_Y,
+    TAP_DOB_YEAR_ARROW_X, TAP_DOB_YEAR_ARROW_Y, TAP_DOB_YEAR_1961_X, TAP_DOB_YEAR_1961_Y,
+    TAP_DOB_CONTINUE_X, TAP_DOB_CONTINUE_Y, TAP_FREE_COINS_X, TAP_FREE_COINS_Y,
+    TAP_AD_WATCH_TIME, TAP_AFTER_AD_DELAY, TAP_CONTINUE_X, TAP_CONTINUE_Y,
+    TAP_COLLECT_FRIEND_X, TAP_COLLECT_FRIEND_Y, APP_LAUNCH_DELAY, MAIN_LOOP_COUNT
+)
+from utils import wait
 
 class AddMoney:
     """
@@ -82,9 +49,9 @@ class AddMoney:
 
         # ============ LAUNCH APP ============
         self.driver: webdriver.Remote = webdriver.Remote("http://localhost:4723/wd/hub", DESIRED_CAPS)
-        time.sleep(APP_LAUNCH_DELAY)  # Wait for App
+        wait(APP_LAUNCH_DELAY)
 
-        self.dev_window_size: Dict[str, int] = WIN_SIZE_RN8P if phone == "RN8P" else self.driver.get_window_size()
+        self.dev_window_size = WIN_SIZE_RN8P if phone == "RN8P" else self.driver.get_window_size()
 
     def tap_at(self, _x: int = 0, _y: int = 0, t: float = 1) -> None:
         """
@@ -117,15 +84,14 @@ class AddMoney:
 
         # Login to FB Account
         self.tap_at(TAP_FB_LOGIN_X, TAP_FB_LOGIN_Y)
-        time.sleep(TAP_FB_LOGIN_DELAY)
+        wait(TAP_FB_LOGIN_DELAY)
         try:
             print("Tap Continue")
             fb_login_continue_elem = self.driver.find_element_by_xpath(CONTINUE_BTN_XPATH)
             TouchAction(self.driver).tap(fb_login_continue_elem).perform()
-            time.sleep(TAP_FB_LOGIN_DELAY)  # Wait for Login
+            wait(TAP_FB_LOGIN_DELAY) # Wait for Login
         except Exception as e:
             print(e)
-            pass
 
     def _handle_set_DOB(self) -> None:
         """
@@ -147,10 +113,10 @@ class AddMoney:
             count (int): Number of times to repeat the add-money process.
         """
         for i in range(count):
-            self.tap_at(TAP_FREE_COINS_X, TAP_FREE_COINS_Y)  # free coins
-            time.sleep(TAP_AD_WATCH_TIME)
+            self.tap_at(TAP_FREE_COINS_X, TAP_FREE_COINS_Y)
+            wait(TAP_AD_WATCH_TIME)
             self.driver.back()
-            time.sleep(TAP_AFTER_AD_DELAY)
+            wait(TAP_AFTER_AD_DELAY)
             self.tap_at(TAP_CONTINUE_X, TAP_CONTINUE_Y)  # Continue
             if i == 0:
                 self.tap_at(TAP_COLLECT_FRIEND_X, TAP_COLLECT_FRIEND_Y)  # 1 Friend has used your code (Collect)
