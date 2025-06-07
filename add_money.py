@@ -143,12 +143,20 @@ class AddMoney:
         self.add_money(count)
         self.teardown()
 
+    def __enter__(self):
+        """Enable use as a context manager."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Ensure resources are cleaned up when exiting context."""
+        self.teardown()
+
 if __name__ == '__main__':
     keep_running = True
     while keep_running:
         try:
-            runner = AddMoney()
-            runner.main(MAIN_LOOP_COUNT)  # reset at each MAIN_LOOP_COUNT so that if there's some issue with app, we can recover
+            with AddMoney() as runner:
+                runner.main(MAIN_LOOP_COUNT)  # reset at each MAIN_LOOP_COUNT so that if there's some issue with app, we can recover
         except Exception as e:
             print(e)
             print("An error occurred. Attempting to recover...")
